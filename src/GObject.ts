@@ -62,6 +62,7 @@ namespace fgui {
         public packageItem: PackageItem;  //construction data
 
         private static gInstanceCounter: number = 0;
+        onFinishInit:()=>void;
 
         public constructor() {
             this.$id = `${GObject.gInstanceCounter++}`;

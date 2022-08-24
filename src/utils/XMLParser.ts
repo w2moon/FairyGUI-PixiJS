@@ -69,6 +69,7 @@ namespace fgui.utils {
         }
 
         public static getNodeAttributes(xml: XmlNode): AttributeDictionary {
+            // @ts-ignore attributes确实是对的
             let asList: NamedNodeMap = xml.context.attributes;
             let ret: AttributeDictionary = {};
             if (!asList || asList.length <= 0) return ret;

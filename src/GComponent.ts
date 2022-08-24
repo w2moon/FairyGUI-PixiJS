@@ -850,6 +850,9 @@ namespace fgui {
             this.$children.forEach((child, i) => {
                 child.relations.setup(displayList[i].desc);
                 child.setupAfterAdd(displayList[i].desc);
+                if(child.onFinishInit){
+                    child.onFinishInit();
+                }
                 child.$inProgressBuilding = false;
             });
 

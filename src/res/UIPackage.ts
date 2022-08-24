@@ -406,6 +406,9 @@ namespace fgui {
             UIPackage.$constructingObjects++;
             g.packageItem = item;
             g.constructFromResource();
+            if(g.onFinishInit){
+                g.onFinishInit();
+            }
             UIPackage.$constructingObjects--;
             return g;
         }
