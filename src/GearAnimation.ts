@@ -11,7 +11,7 @@ namespace fgui {
         }
 
         protected init(): void {
-            this.$default = new GearAnimationValue(this.$owner.playing, this.$owner.frame);
+            this.$default = new GearAnimationValue(this.$owner.playing, this.$owner.frame,this.$owner.animationName);
             this.$storage = {};
         }
 
@@ -29,6 +29,7 @@ namespace fgui {
             let arr: string[] = value.split(",");
             gv.frame = parseInt(arr[0]);
             gv.playing = arr[1] == "p";
+            gv.animationName = arr[2];
         }
 
         public apply(): void {
@@ -40,6 +41,7 @@ namespace fgui {
 
             this.$owner.frame = gv.frame;
             this.$owner.playing = gv.playing;
+            this.$owner.animationName = gv.animationName;
 
             this.$owner.$gearLocked = false;
         }
@@ -56,16 +58,19 @@ namespace fgui {
 
             gv.frame = this.$owner.frame;
             gv.playing = this.$owner.playing;
+            gv.animationName = this.$owner.animationName;
         }
     }
 
     class GearAnimationValue implements IAnimationGear {
         public playing: boolean;
         public frame: number;
+        public animationName:string;
 
-        public constructor(playing: boolean = true, frame: number = 0) {
+        public constructor(playing: boolean = true, frame: number = 0,animationName:string ="") {
             this.playing = playing;
             this.frame = frame;
+            this.animationName = animationName;
         }
     }
 }

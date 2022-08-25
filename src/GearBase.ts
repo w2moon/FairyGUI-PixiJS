@@ -72,7 +72,6 @@ namespace fgui {
             this.init();
 
             let str: string;
-
             str = xml.attributes.tween;
             if (str)
                 this.$tween = true;

@@ -208,6 +208,21 @@ namespace fgui {
             let srcName: string = url.substr(pos2 + 1);
             return UIPackage.getItemURL(pkgName, srcName);
         }
+        public getRes(){
+            let buf: PIXI.loaders.Resource = utils.AssetLoader.resourcesPool[this.$resKey];
+            if (!buf)
+                buf = utils.AssetLoader.resourcesPool[`${this.$resKey}_fui`];
+            return buf;
+             
+        }
+
+        public getSubRes(file:string){
+            const buf = this.getRes();
+            const arr = buf.url.split('/');
+            arr.pop();
+            const prefix = arr.join('/');
+            return prefix+"/"+file;
+        }
 
         private create(resKey: string): void {
             this.$resKey = resKey;
@@ -298,6 +313,13 @@ namespace fgui {
                         }
                         else if (str == "tile")
                             pi.scaleByTile = true;
+
+                        break;
+                    }
+                    case PackageItemType.Misc: {
+                        str = cxml.attributes.anchor;
+                        const anchor = str.split(UIPackage.sep0);
+                        pi.anchor = new PIXI.Point(parseFloat(anchor[0]),parseFloat(anchor[1]));
 
                         break;
                     }
@@ -502,8 +524,10 @@ namespace fgui {
                     }
                     return item.componentData;
 
-                default:
+                default:{
                     return utils.AssetLoader.resourcesPool[`${this.$resKey}@${item.id}`];
+                }
+                    
             }
         }
 

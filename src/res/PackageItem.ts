@@ -10,7 +10,11 @@ namespace fgui {
         public width: number = 0;
         public height: number = 0;
         public file: string;
+        public path:string;
         public decoded: boolean;
+
+        // spine
+        public anchor:PIXI.Point;
 
         //image
         public scale9Grid: PIXI.Rectangle;

@@ -258,6 +258,30 @@ declare namespace fgui {
         packageItem: PackageItem;
         private static gInstanceCounter;
         onFinishInit: () => void;
+        _gswl: {
+            controllers?: {
+                [controllerName: string]: {
+                    pages?: {
+                        [pageName: string]: {
+                            animationName?: string;
+                            skinName?: string;
+                        };
+                    };
+                };
+            };
+        };
+        readonly gswl: {
+            controllers?: {
+                [controllerName: string]: {
+                    pages?: {
+                        [pageName: string]: {
+                            animationName?: string;
+                            skinName?: string;
+                        };
+                    };
+                };
+            };
+        };
         constructor();
         readonly id: string;
         name: string;
@@ -815,6 +839,73 @@ declare namespace fgui {
     }
 }
 declare namespace fgui {
+    class GLoader3D extends GObject implements IAnimationGear, IColorGear {
+        protected $url: string;
+        protected $align: AlignType;
+        protected $verticalAlign: VertAlignType;
+        protected $autoSize: boolean;
+        protected $fill: LoaderFillType;
+        protected $showErrorSign: boolean;
+        protected $playing: boolean;
+        protected $frame: number;
+        protected $color: number;
+        private $contentItem;
+        private $contentSourceWidth;
+        private $contentSourceHeight;
+        private $contentWidth;
+        private $contentHeight;
+        protected $container: UIContainer;
+        protected $content: PIXI.spine38.Spine;
+        protected $errorSign: GObject;
+        private _loop;
+        private _animationName;
+        private _skinName;
+        private $updatingLayout;
+        private static $errorSignPool;
+        constructor();
+        protected createDisplayObject(): void;
+        dispose(): void;
+        url: string;
+        icon: string;
+        align: AlignType;
+        verticalAlign: VertAlignType;
+        fill: LoaderFillType;
+        autoSize: boolean;
+        playing: boolean;
+        frame: number;
+        color: number;
+        animationName: string;
+        skinName: string;
+        loop: boolean;
+        private _playbackRate;
+        playbackRate: number;
+        private _animationDuration;
+        setAnimationDuration(name: string, duration: number): void;
+        private _defaultMix;
+        setDefaultMix(v: number): void;
+        private onChange;
+        private applyColor;
+        showErrorSign: boolean;
+        readonly content: PIXI.spine38.Spine;
+        texture: PIXI.Texture;
+        protected loadContent(): void;
+        protected loadFromPackage(itemURL: string): void;
+        private switchToMovieMode;
+        private $loadingTexture;
+        protected loadExternal(): void;
+        protected freeExternal(texture: PIXI.Texture): void;
+        private $loadResCompleted;
+        protected onExternalLoadSuccess(texture: PIXI.Texture): void;
+        protected onExternalLoadFailed(): void;
+        private setErrorState;
+        private clearErrorState;
+        private updateLayout;
+        private clearContent;
+        protected handleSizeChanged(): void;
+        setupBeforeAdd(xml: utils.XmlNode): void;
+    }
+}
+declare namespace fgui {
     class GMovieClip extends GObject implements IAnimationGear, IColorGear {
         private $movieClip;
         constructor();
@@ -1276,6 +1367,7 @@ declare namespace fgui {
     interface IAnimationGear {
         playing: boolean;
         frame: number;
+        animationName?: string;
     }
     let isAnimationGear: (obj: any) => obj is IAnimationGear;
 }
@@ -2257,7 +2349,9 @@ declare namespace fgui {
         width: number;
         height: number;
         file: string;
+        path: string;
         decoded: boolean;
+        anchor: PIXI.Point;
         scale9Grid: PIXI.Rectangle;
         scaleByTile: boolean;
         tiledSlices: number;
@@ -2324,6 +2418,8 @@ declare namespace fgui {
         static getBitmapFontByURL(url: string): BitmapFont;
         static setStringsSource(source: string): void;
         static normalizeURL(url: string): string;
+        getRes(): PIXI.loaders.Resource;
+        getSubRes(file: string): string;
         private create;
         private decompressPackage;
         dispose(): void;

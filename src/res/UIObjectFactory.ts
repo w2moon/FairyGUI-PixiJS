@@ -26,7 +26,7 @@ namespace fgui {
                     return new GMovieClip();
 
                 case PackageItemType.Component:
-                    let cls: { new(): GObject; } = UIObjectFactory.packageItemExtensions[pi.owner.id + pi.id];
+                    let cls: { new(): GObject; } = UIObjectFactory.packageItemExtensions[pi.owner.name +"/"+ pi.name];
                     if (cls)
                         return new cls();
 
@@ -98,6 +98,10 @@ namespace fgui {
                         return new UIObjectFactory.loaderExtension();
                     else
                         return new GLoader();
+                case "loader3D":{
+                    return new GLoader3D();
+                }
+                    
             }
             return null;
         }

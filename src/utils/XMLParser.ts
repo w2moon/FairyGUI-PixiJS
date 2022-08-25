@@ -38,7 +38,7 @@ namespace fgui.utils {
         private static $parser: DOMParser = new DOMParser();
 
         public static tryParse(xmlstring: string, mimeType: string = "application/xml"): XmlNode {
-            let doc: Document = XmlParser.$parser.parseFromString(xmlstring, mimeType);
+            let doc: Document = XmlParser.$parser.parseFromString(xmlstring, mimeType as any);
             if (doc && doc.childNodes && doc.childNodes.length >= 1)
                 return new XmlNode(doc.firstChild);
             return null;

@@ -374,6 +374,23 @@ window.__extends = (this && this.__extends) || (function () {
             this.$relations = new fgui.Relations(this);
             this.$gears = [];
         }
+        Object.defineProperty(GObject.prototype, "gswl", {
+            get: function () {
+                if (!this._gswl) {
+                    if (this.data) {
+                        try {
+                            this._gswl = JSON.parse(this.data).gswl;
+                        }
+                        catch (e) {
+                            console.log(e);
+                        }
+                    }
+                }
+                return this._gswl;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(GObject.prototype, "id", {
             get: function () {
                 return this.$id;
@@ -6332,6 +6349,523 @@ window.__extends = (this && this.__extends) || (function () {
 })(fgui || (fgui = {}));
 
 (function (fgui) {
+    var GLoader3D = (function (_super) {
+        __extends(GLoader3D, _super);
+        function GLoader3D() {
+            var _this = _super.call(this) || this;
+            _this.$frame = 0;
+            _this.$color = 0;
+            _this.$contentSourceWidth = 0;
+            _this.$contentSourceHeight = 0;
+            _this.$contentWidth = 0;
+            _this.$contentHeight = 0;
+            _this._playbackRate = 1;
+            _this._defaultMix = 0;
+            _this.$loadingTexture = null;
+            _this.$playing = true;
+            _this.$url = "";
+            _this.$fill = 0;
+            _this.$align = "left";
+            _this.$verticalAlign = 0;
+            _this.$showErrorSign = true;
+            _this.$color = 0xFFFFFF;
+            return _this;
+        }
+        GLoader3D.prototype.createDisplayObject = function () {
+            this.$container = new fgui.UIContainer(this);
+            this.$container.hitArea = new PIXI.Rectangle();
+            this.setDisplayObject(this.$container);
+            this.$container.interactiveChildren = false;
+        };
+        GLoader3D.prototype.dispose = function () {
+            this.clearContent();
+            _super.prototype.dispose.call(this);
+        };
+        Object.defineProperty(GLoader3D.prototype, "url", {
+            get: function () {
+                return this.$url;
+            },
+            set: function (value) {
+                if (this.$url == value)
+                    return;
+                this.$url = value;
+                this.loadContent();
+                this.updateGear(7);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "icon", {
+            get: function () {
+                return this.$url;
+            },
+            set: function (value) {
+                this.url = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "align", {
+            get: function () {
+                return this.$align;
+            },
+            set: function (value) {
+                if (this.$align != value) {
+                    this.$align = value;
+                    this.updateLayout();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "verticalAlign", {
+            get: function () {
+                return this.$verticalAlign;
+            },
+            set: function (value) {
+                if (this.$verticalAlign != value) {
+                    this.$verticalAlign = value;
+                    this.updateLayout();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "fill", {
+            get: function () {
+                return this.$fill;
+            },
+            set: function (value) {
+                if (this.$fill != value) {
+                    this.$fill = value;
+                    this.updateLayout();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "autoSize", {
+            get: function () {
+                return this.$autoSize;
+            },
+            set: function (value) {
+                if (this.$autoSize != value) {
+                    this.$autoSize = value;
+                    this.updateLayout();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "playing", {
+            get: function () {
+                return this.$playing;
+            },
+            set: function (value) {
+                if (this.$playing != value) {
+                    this.$playing = value;
+                    this.updateGear(5);
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "frame", {
+            get: function () {
+                return this.$frame;
+            },
+            set: function (value) {
+                if (this.$frame != value) {
+                    this.$frame = value;
+                    this.updateGear(5);
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "color", {
+            get: function () {
+                return this.$color;
+            },
+            set: function (value) {
+                if (this.$color != value) {
+                    this.$color = value;
+                    this.updateGear(4);
+                    this.applyColor();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "animationName", {
+            get: function () {
+                return this._animationName;
+            },
+            set: function (value) {
+                if (this._animationName != value) {
+                    this._playbackRate = 1;
+                    this._animationName = value;
+                    this.onChange();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "skinName", {
+            get: function () {
+                return this._skinName;
+            },
+            set: function (value) {
+                if (this._skinName != value) {
+                    this._skinName = value;
+                    this.onChange();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "loop", {
+            get: function () {
+                return this._loop;
+            },
+            set: function (value) {
+                if (this._loop != value) {
+                    this._loop = value;
+                    this.onChange();
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "playbackRate", {
+            get: function () {
+                return this._playbackRate;
+            },
+            set: function (v) {
+                if (this._playbackRate === v) {
+                    return;
+                }
+                this._playbackRate = v;
+                this.onChange();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        GLoader3D.prototype.setAnimationDuration = function (name, duration) {
+            if (!this._animationDuration) {
+                this._animationDuration = {};
+            }
+            if (this._animationDuration[name] === duration) {
+                return;
+            }
+            if (!duration) {
+                delete this._animationDuration[name];
+            }
+            else {
+                this._animationDuration[name] = duration;
+            }
+            this.onChange();
+        };
+        GLoader3D.prototype.setDefaultMix = function (v) {
+            if (this._defaultMix === v) {
+                return;
+            }
+            this._defaultMix = v;
+            this.onChange();
+        };
+        GLoader3D.prototype.onChange = function () {
+            if (!this.$content)
+                return;
+            if (this._playbackRate !== undefined) {
+            }
+            if (this._defaultMix !== undefined) {
+                this.$content.stateData.defaultMix = this._defaultMix;
+            }
+            if (this._animationName && this._animationDuration && this._animationDuration[this._animationName]) {
+            }
+            if (this._animationName) {
+                if (this.$playing)
+                    this.$content.state.addAnimation(0, this._animationName, this._loop, 0);
+                else
+                    this.$content.state.addAnimation(0, this._animationName, false, 0);
+            }
+            else
+                this.$content.state.addEmptyAnimation(0, 0, 0);
+            if (this._skinName)
+                this.$content.skeleton.setSkinByName(this._skinName);
+            else
+                this.$content.skeleton.setSkinByName("default");
+        };
+        GLoader3D.prototype.applyColor = function () {
+            if (this.$content)
+                this.$content.tint = this.$color;
+        };
+        Object.defineProperty(GLoader3D.prototype, "showErrorSign", {
+            get: function () {
+                return this.$showErrorSign;
+            },
+            set: function (value) {
+                this.$showErrorSign = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "content", {
+            get: function () {
+                return this.$content;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLoader3D.prototype, "texture", {
+            get: function () {
+                if (this.$content instanceof fgui.UIImage)
+                    return this.$content.texture;
+                else
+                    return null;
+            },
+            set: function (value) {
+                this.url = null;
+                this.switchToMovieMode(false);
+                if (this.$content instanceof fgui.UIImage)
+                    this.$content.texture = value;
+                if (value) {
+                    this.$contentSourceWidth = value.orig.width;
+                    this.$contentSourceHeight = value.orig.height;
+                }
+                else
+                    this.$contentSourceWidth = this.$contentHeight = 0;
+                this.updateLayout();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        GLoader3D.prototype.loadContent = function () {
+            this.clearContent();
+            if (!this.$url)
+                return;
+            if (fgui.utils.StringUtil.startsWith(this.$url, "ui://"))
+                this.loadFromPackage(this.$url);
+            else
+                this.loadExternal();
+        };
+        GLoader3D.prototype.loadFromPackage = function (itemURL) {
+            var _this = this;
+            this.$contentItem = fgui.UIPackage.getItemByURL(itemURL);
+            if (this.$contentItem) {
+                this.$contentItem.load();
+                if (this.$contentItem.type == 0) {
+                }
+                else if (this.$contentItem.type == 2) {
+                }
+                else if (this.$contentItem.type == 5) {
+                    var jsonUrl_1 = this.$contentItem.owner.getSubRes(this.$contentItem.file);
+                    PIXI.loader.add(jsonUrl_1, jsonUrl_1).load(function (loader, resources) {
+                        _this.$content = new PIXI.spine38.Spine(resources[jsonUrl_1].spineData);
+                        _this.$container.addChild(_this.$content);
+                        _this.$content.x = _this.$contentItem.anchor.x;
+                        _this.$content.y = _this.$contentItem.anchor.y;
+                        _this.onChange();
+                    });
+                }
+                else
+                    this.setErrorState();
+            }
+            else
+                this.setErrorState();
+        };
+        GLoader3D.prototype.switchToMovieMode = function (value) {
+            this.$container.removeChildren();
+            this.$container.addChild(this.$content);
+        };
+        GLoader3D.prototype.loadExternal = function () {
+            var _this = this;
+            var texture = PIXI.Texture.fromImage(this.$url, true);
+            this.$loadingTexture = texture;
+            texture.once("update", function () {
+                if (!texture.width || !texture.height)
+                    _this.$loadResCompleted(null);
+                else
+                    _this.$loadResCompleted(texture);
+            });
+        };
+        GLoader3D.prototype.freeExternal = function (texture) {
+            PIXI.Texture.removeFromCache(texture);
+            texture.destroy(texture.baseTexture != null);
+        };
+        GLoader3D.prototype.$loadResCompleted = function (res) {
+            if (res)
+                this.onExternalLoadSuccess(res);
+            else {
+                this.onExternalLoadFailed();
+                this.$loadingTexture.removeAllListeners();
+                this.freeExternal(this.$loadingTexture);
+                this.$loadingTexture = null;
+            }
+            this.$loadingTexture = null;
+        };
+        GLoader3D.prototype.onExternalLoadSuccess = function (texture) {
+            this.$container.removeChildren();
+            this.$container.addChild(this.$content);
+            texture.frame = new PIXI.Rectangle(0, 0, texture.baseTexture.width, texture.baseTexture.height);
+            this.$contentSourceWidth = texture.width;
+            this.$contentSourceHeight = texture.height;
+            this.updateLayout();
+        };
+        GLoader3D.prototype.onExternalLoadFailed = function () {
+            this.setErrorState();
+        };
+        GLoader3D.prototype.setErrorState = function () {
+            if (!this.$showErrorSign)
+                return;
+            if (this.$errorSign == null) {
+                if (fgui.UIConfig.loaderErrorSign) {
+                    this.$errorSign = GLoader3D.$errorSignPool.get(fgui.UIConfig.loaderErrorSign);
+                }
+            }
+            if (this.$errorSign) {
+                this.$errorSign.width = this.width;
+                this.$errorSign.height = this.height;
+                this.$container.addChild(this.$errorSign.displayObject);
+            }
+        };
+        GLoader3D.prototype.clearErrorState = function () {
+            if (this.$errorSign) {
+                this.$container.removeChild(this.$errorSign.displayObject);
+                GLoader3D.$errorSignPool.recycle(this.$errorSign.resourceURL, this.$errorSign);
+                this.$errorSign = null;
+            }
+        };
+        GLoader3D.prototype.updateLayout = function () {
+            if (this.$content == null) {
+                if (this.$autoSize) {
+                    this.$updatingLayout = true;
+                    this.setSize(50, 30);
+                    this.$updatingLayout = false;
+                }
+                return;
+            }
+            this.$content.position.set(0, 0);
+            this.$content.scale.set(1, 1);
+            this.$contentWidth = this.$contentSourceWidth;
+            this.$contentHeight = this.$contentSourceHeight;
+            if (this.$autoSize) {
+                this.$updatingLayout = true;
+                if (this.$contentWidth == 0)
+                    this.$contentWidth = 50;
+                if (this.$contentHeight == 0)
+                    this.$contentHeight = 30;
+                this.setSize(this.$contentWidth, this.$contentHeight);
+                this.$updatingLayout = false;
+            }
+            else {
+                var sx = 1, sy = 1;
+                if (this.$fill != 0) {
+                    sx = this.width / this.$contentSourceWidth;
+                    sy = this.height / this.$contentSourceHeight;
+                    if (sx != 1 || sy != 1) {
+                        if (this.$fill == 2)
+                            sx = sy;
+                        else if (this.$fill == 3)
+                            sy = sx;
+                        else if (this.$fill == 1) {
+                            if (sx > sy)
+                                sx = sy;
+                            else
+                                sy = sx;
+                        }
+                        else if (this.$fill == 5) {
+                            if (sx > sy)
+                                sy = sx;
+                            else
+                                sx = sy;
+                        }
+                        this.$contentWidth = this.$contentSourceWidth * sx;
+                        this.$contentHeight = this.$contentSourceHeight * sy;
+                    }
+                }
+                if (this.$content instanceof fgui.UIImage) {
+                    this.$content.width = this.$contentWidth;
+                    this.$content.height = this.$contentHeight;
+                }
+                else
+                    this.$content.scale.set(sx, sy);
+                if (this.$align == "center")
+                    this.$content.x = Math.floor((this.width - this.$contentWidth) / 2);
+                else if (this.$align == "right")
+                    this.$content.x = this.width - this.$contentWidth;
+                if (this.$verticalAlign == 1)
+                    this.$content.y = Math.floor((this.height - this.$contentHeight) / 2);
+                else if (this.$verticalAlign == 2)
+                    this.$content.y = this.height - this.$contentHeight;
+            }
+        };
+        GLoader3D.prototype.clearContent = function () {
+            this.clearErrorState();
+            if (this.$content && this.$content.parent)
+                this.$container.removeChild(this.$content);
+            if (this.$loadingTexture) {
+                this.$loadingTexture.removeAllListeners();
+                this.freeExternal(this.$loadingTexture);
+                this.$loadingTexture = null;
+            }
+            if (this.$contentItem == null && this.$content instanceof fgui.UIImage)
+                this.freeExternal(this.$content.texture);
+            this.$content && this.$content.destroy();
+            this.$content = null;
+            this.$contentItem = null;
+        };
+        GLoader3D.prototype.handleSizeChanged = function () {
+            if (!this.$updatingLayout)
+                this.updateLayout();
+            var rect = this.$container.hitArea;
+            rect.x = rect.y = 0;
+            rect.width = this.width;
+            rect.height = this.height;
+        };
+        GLoader3D.prototype.setupBeforeAdd = function (xml) {
+            _super.prototype.setupBeforeAdd.call(this, xml);
+            var str;
+            str = xml.attributes.url;
+            if (str)
+                this.$url = str;
+            str = xml.attributes.align;
+            if (str)
+                this.$align = fgui.ParseAlignType(str);
+            str = xml.attributes.vAlign;
+            if (str)
+                this.$verticalAlign = fgui.ParseVertAlignType(str);
+            str = xml.attributes.fill;
+            if (str)
+                this.$fill = fgui.ParseLoaderFillType(str);
+            this.$autoSize = xml.attributes.autoSize == "true";
+            str = xml.attributes.errorSign;
+            if (str)
+                this.$showErrorSign = str == "true";
+            this.$playing = xml.attributes.playing != "false";
+            console.log("xml.attributes", xml.attributes);
+            if (xml.attributes.skin) {
+                this._skinName = xml.attributes.skin;
+            }
+            if (xml.attributes.loop) {
+                this._loop = String(xml.attributes.loop) === "true";
+            }
+            if (xml.attributes.animation) {
+                this._animationName = xml.attributes.animation;
+            }
+            str = xml.attributes.color;
+            if (str)
+                this.color = fgui.utils.StringUtil.convertFromHtmlColor(str);
+            if (this.$url)
+                this.loadContent();
+        };
+        GLoader3D.$errorSignPool = new fgui.utils.GObjectRecycler();
+        return GLoader3D;
+    }(fgui.GObject));
+    fgui.GLoader3D = GLoader3D;
+})(fgui || (fgui = {}));
+
+(function (fgui) {
     var GMovieClip = (function (_super) {
         __extends(GMovieClip, _super);
         function GMovieClip() {
@@ -8741,7 +9275,7 @@ window.__extends = (this && this.__extends) || (function () {
             return _super.call(this, owner) || this;
         }
         GearAnimation.prototype.init = function () {
-            this.$default = new GearAnimationValue(this.$owner.playing, this.$owner.frame);
+            this.$default = new GearAnimationValue(this.$owner.playing, this.$owner.frame, this.$owner.animationName);
             this.$storage = {};
         };
         GearAnimation.prototype.addStatus = function (pageId, value) {
@@ -8757,6 +9291,7 @@ window.__extends = (this && this.__extends) || (function () {
             var arr = value.split(",");
             gv.frame = parseInt(arr[0]);
             gv.playing = arr[1] == "p";
+            gv.animationName = arr[2];
         };
         GearAnimation.prototype.apply = function () {
             this.$owner.$gearLocked = true;
@@ -8765,6 +9300,7 @@ window.__extends = (this && this.__extends) || (function () {
                 gv = this.$default;
             this.$owner.frame = gv.frame;
             this.$owner.playing = gv.playing;
+            this.$owner.animationName = gv.animationName;
             this.$owner.$gearLocked = false;
         };
         GearAnimation.prototype.updateState = function () {
@@ -8777,16 +9313,19 @@ window.__extends = (this && this.__extends) || (function () {
             }
             gv.frame = this.$owner.frame;
             gv.playing = this.$owner.playing;
+            gv.animationName = this.$owner.animationName;
         };
         return GearAnimation;
     }(fgui.GearBase));
     fgui.GearAnimation = GearAnimation;
     var GearAnimationValue = (function () {
-        function GearAnimationValue(playing, frame) {
+        function GearAnimationValue(playing, frame, animationName) {
             if (playing === void 0) { playing = true; }
             if (frame === void 0) { frame = 0; }
+            if (animationName === void 0) { animationName = ""; }
             this.playing = playing;
             this.frame = frame;
+            this.animationName = animationName;
         }
         return GearAnimationValue;
     }());
@@ -15309,7 +15848,7 @@ var PIXI;
                 case 2:
                     return new fgui.GMovieClip();
                 case 4:
-                    var cls = UIObjectFactory.packageItemExtensions[pi.owner.id + pi.id];
+                    var cls = UIObjectFactory.packageItemExtensions[pi.owner.name + "/" + pi.name];
                     if (cls)
                         return new cls();
                     var xml = pi.owner.getItemAsset(pi);
@@ -15362,6 +15901,9 @@ var PIXI;
                         return new UIObjectFactory.loaderExtension();
                     else
                         return new fgui.GLoader();
+                case "loader3D": {
+                    return new fgui.GLoader3D();
+                }
             }
             return null;
         };
@@ -15495,6 +16037,19 @@ var PIXI;
             var srcName = url.substr(pos2 + 1);
             return UIPackage.getItemURL(pkgName, srcName);
         };
+        UIPackage.prototype.getRes = function () {
+            var buf = fgui.utils.AssetLoader.resourcesPool[this.$resKey];
+            if (!buf)
+                buf = fgui.utils.AssetLoader.resourcesPool[this.$resKey + "_fui"];
+            return buf;
+        };
+        UIPackage.prototype.getSubRes = function (file) {
+            var buf = this.getRes();
+            var arr = buf.url.split('/');
+            arr.pop();
+            var prefix = arr.join('/');
+            return prefix + "/" + file;
+        };
         UIPackage.prototype.create = function (resKey) {
             var _this = this;
             this.$resKey = resKey;
@@ -15564,6 +16119,12 @@ var PIXI;
                         }
                         else if (str == "tile")
                             pi.scaleByTile = true;
+                        break;
+                    }
+                    case 5: {
+                        str = cxml.attributes.anchor;
+                        var anchor = str.split(UIPackage.sep0);
+                        pi.anchor = new PIXI.Point(parseFloat(anchor[0]), parseFloat(anchor[1]));
                         break;
                     }
                 }
@@ -15755,8 +16316,9 @@ var PIXI;
                         this.loadComponentTranslation(item);
                     }
                     return item.componentData;
-                default:
+                default: {
                     return fgui.utils.AssetLoader.resourcesPool[this.$resKey + "@" + item.id];
+                }
             }
         };
         UIPackage.prototype.loadComponentChildren = function (item) {
