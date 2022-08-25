@@ -558,7 +558,6 @@ namespace fgui {
 
             this.$playing = xml.attributes.playing != "false";
 
-            console.log("xml.attributes",xml.attributes);
             if(xml.attributes.skin){
                 this._skinName = xml.attributes.skin;
             }
