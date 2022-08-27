@@ -151,27 +151,28 @@ namespace fgui {
             this.$appContext.view.style.position = "absolute";
             let container = this.$appContext.view.parentElement;
             let style = container.style;
+            // TODO 这里注释掉了输入框，因为小程序里有问题
             //if parent is not a DIV box, make one
-            if(container.tagName != "DIV") {
-                container = document.createElement("DIV");
-                style.position = "relative";
-                style.left = style.top = "0px";
-                style.width = style.height = "100%";  //and set default full-screen
-                style.overflow = "hidden";
-                this.$appContext.view.parentElement.appendChild(container);
-                container.appendChild(this.$appContext.view);
-            }
-            let containerPosition:string;
-            if(document.defaultView && document.defaultView.getComputedStyle)
-                containerPosition = document.defaultView.getComputedStyle(container).position;
-            else
-                containerPosition = style.position;
-            if(containerPosition == "" || containerPosition == "static") {
-                containerPosition = "relative";
-                container.style.position = containerPosition;
-            }
+            // if(container.tagName != "DIV") {
+            //     container = document.createElement("DIV");
+            //     style.position = "relative";
+            //     style.left = style.top = "0px";
+            //     style.width = style.height = "100%";  //and set default full-screen
+            //     style.overflow = "hidden";
+            //     this.$appContext.view.parentElement.appendChild(container);
+            //     container.appendChild(this.$appContext.view);
+            // }
+            // let containerPosition:string;
+            // if(document.defaultView && document.defaultView.getComputedStyle)
+            //     containerPosition = document.defaultView.getComputedStyle(container).position;
+            // else
+            //     containerPosition = style.position;
+            // if(containerPosition == "" || containerPosition == "static") {
+            //     containerPosition = "relative";
+            //     container.style.position = containerPosition;
+            // }
             
-            HTMLInput.inst.initialize(container, this.$appContext.view);
+            // HTMLInput.inst.initialize(container, this.$appContext.view);
             this.updateScreenSize();
         }
 
@@ -360,10 +361,11 @@ namespace fgui {
             this.$scaleX = stageWidth / displayWidth
             this.$scaleY = stageHeight / displayHeight;
             
-            let im = this.$appContext.renderer.plugins.interaction as PIXI.extras.InteractionManager;
-            im.stageRotation = rotDeg;
-            im.stageScaleX = this.$scaleX;
-            im.stageScaleY = this.$scaleY;
+            // TODO 移除了这个点击补丁，可能旋转有问题
+            // let im = this.$appContext.renderer.plugins.interaction as PIXI.extras.InteractionManager;
+            // im.stageRotation = rotDeg;
+            // im.stageScaleX = this.$scaleX;
+            // im.stageScaleY = this.$scaleY;
             this.$appContext.renderer.resize(stageWidth, stageHeight);
             HTMLInput.inst.updateSize(displayWidth / stageWidth, displayHeight / stageHeight);
             

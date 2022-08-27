@@ -1,7 +1,15 @@
-var PIXI = require("pixi.js");
-window.fgui = {};
+
+var PIXI = require("../../@eva/pixi").default;
+window.fgui = window.fgui || {};
+require("./domparserinone");
 var fgui = window.fairygui = window.fgui;
-window.__extends = (this && this.__extends) || (function () {
+var createjs = window.createjs;
+var Zlib = window.Zlib;
+var Node = window.Node;
+var DOMParser = window.DOMParser || window.Parser.DOMParser;
+var document = window.document || window.documentAlias;
+var ArrayBuffer = window.ArrayBuffer;
+var __extends = window.__extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -6843,7 +6851,6 @@ window.__extends = (this && this.__extends) || (function () {
             if (str)
                 this.$showErrorSign = str == "true";
             this.$playing = xml.attributes.playing != "false";
-            console.log("xml.attributes", xml.attributes);
             if (xml.attributes.skin) {
                 this._skinName = xml.attributes.skin;
             }
@@ -13347,55 +13354,6 @@ var PIXI;
 (function (PIXI) {
     var extras;
     (function (extras) {
-        var InteractionManager = (function (_super) {
-            __extends(InteractionManager, _super);
-            function InteractionManager(renderer, options) {
-                var _this = _super.call(this, renderer, options) || this;
-                _this.stageRotation = 0;
-                _this.stageScaleX = 1;
-                _this.stageScaleY = 1;
-                return _this;
-            }
-            InteractionManager.prototype.mapPositionToPoint = function (point, x, y) {
-                var rect = void 0;
-                var dom = this.interactionDOMElement;
-                if (!dom.parentElement) {
-                    rect = { x: 0, y: 0, width: 0, height: 0 };
-                }
-                else {
-                    rect = dom.getBoundingClientRect();
-                }
-                var nav = navigator;
-                var resolutionMultiplier = nav.isCocoonJS ? this.resolution : 1.0 / this.resolution;
-                var doc = document.documentElement;
-                var left = rect.left + window.pageXOffset - doc.clientLeft;
-                var top = rect.top + window.pageYOffset - doc.clientTop;
-                x -= left;
-                y -= top;
-                var newx = x, newy = y;
-                if (this.stageRotation == 90) {
-                    newx = y;
-                    newy = rect.width - x;
-                }
-                else if (this.stageRotation == -90) {
-                    newx = rect.height - y;
-                    newy = x;
-                }
-                newx = newx * this.stageScaleX * resolutionMultiplier;
-                newy = newy * this.stageScaleY * resolutionMultiplier;
-                point.set(newx, newy);
-            };
-            return InteractionManager;
-        }(PIXI.interaction.InteractionManager));
-        extras.InteractionManager = InteractionManager;
-        PIXI.CanvasRenderer.registerPlugin("interaction", PIXI.extras.InteractionManager);
-        PIXI.WebGLRenderer.registerPlugin("interaction", PIXI.extras.InteractionManager);
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
         var NineSlicePlane = (function (_super) {
             __extends(NineSlicePlane, _super);
             function NineSlicePlane() {
@@ -15397,25 +15355,6 @@ var PIXI;
             _this.$appContext.view.style.position = "absolute";
             var container = _this.$appContext.view.parentElement;
             var style = container.style;
-            if (container.tagName != "DIV") {
-                container = document.createElement("DIV");
-                style.position = "relative";
-                style.left = style.top = "0px";
-                style.width = style.height = "100%";
-                style.overflow = "hidden";
-                _this.$appContext.view.parentElement.appendChild(container);
-                container.appendChild(_this.$appContext.view);
-            }
-            var containerPosition;
-            if (document.defaultView && document.defaultView.getComputedStyle)
-                containerPosition = document.defaultView.getComputedStyle(container).position;
-            else
-                containerPosition = style.position;
-            if (containerPosition == "" || containerPosition == "static") {
-                containerPosition = "relative";
-                container.style.position = containerPosition;
-            }
-            fgui.HTMLInput.inst.initialize(container, _this.$appContext.view);
             _this.updateScreenSize();
             return _this;
         }
@@ -15622,10 +15561,6 @@ var PIXI;
             this.$height = stageHeight;
             this.$scaleX = stageWidth / displayWidth;
             this.$scaleY = stageHeight / displayHeight;
-            var im = this.$appContext.renderer.plugins.interaction;
-            im.stageRotation = rotDeg;
-            im.stageScaleX = this.$scaleX;
-            im.stageScaleY = this.$scaleY;
             this.$appContext.renderer.resize(stageWidth, stageHeight);
             fgui.HTMLInput.inst.updateSize(displayWidth / stageWidth, displayHeight / stageHeight);
             this.emit("__sizeChanged", this);

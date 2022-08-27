@@ -1784,13 +1784,6 @@ declare namespace fgui {
     }
 }
 declare namespace PIXI.extras {
-    class InteractionManager extends PIXI.interaction.InteractionManager {
-        stageRotation: number;
-        stageScaleX: number;
-        stageScaleY: number;
-        constructor(renderer: CanvasRenderer | WebGLRenderer | SystemRenderer, options?: PIXI.interaction.InteractionManagerOptions);
-        mapPositionToPoint(point: PIXI.Point, x: number, y: number): void;
-    }
 }
 declare namespace PIXI.extras {
     class NineSlicePlane extends PIXI.mesh.NineSlicePlane {
