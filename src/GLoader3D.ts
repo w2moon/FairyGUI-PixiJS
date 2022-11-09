@@ -333,13 +333,19 @@ namespace fgui {
                     const jsonUrl = this.$contentItem.owner.getSubRes(this.$contentItem.file);
                     // const atlasUrl = jsonUrl.replace(".json",".atlas");
                     // const texUrl = jsonUrl.replace(".json",".png");
-                    PIXI.loader.add(jsonUrl, jsonUrl).load( (loader, resources)=> {
+                    const onLoaded = (loader, resources)=> {
                         this.$content = new PIXI.spine38.Spine(resources[jsonUrl].spineData);
                         this.$container.addChild(this.$content);
                         this.$content.x = this.$contentItem.anchor.x;
                         this.$content.y = this.$contentItem.anchor.y;
                         this.onChange();
-                    });
+                    };
+                    if(PIXI.loader.resources[jsonUrl]){
+                        onLoaded(null,PIXI.loader.resources);
+                    }
+                    else{
+                        PIXI.loader.add(jsonUrl, jsonUrl).load(onLoaded);
+                    }
                     
                 }
                 else
