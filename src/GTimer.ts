@@ -137,8 +137,9 @@ namespace fgui {
             this.$ticker.add(this.advance, this, PIXI.UPDATE_PRIORITY.NORMAL);
             this.$ticker.add(this.tickTween, this, PIXI.UPDATE_PRIORITY.HIGH);
 
-            if(!this.$ticker.started)
-                this.$ticker.start();
+            // 会多调start
+            // if(!this.$ticker.started)
+            //     this.$ticker.start();
         }
     }
 
